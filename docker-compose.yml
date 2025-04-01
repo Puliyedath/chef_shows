@@ -1,0 +1,53 @@
+services:
+  chef-shows-app:
+    container_name: chef-shows-app
+    env_file:
+      - ./.env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-3000}:3000"
+    environment:
+      # Override the CUPCAKES_DB_URL for container-to-container communication
+      - SHOWS_DB_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@chef-shows-db:5432/${POSTGRES_DB:-chef-shows}
+    volumes:
+      - .:/usr/src/app
+      - node_modules:/usr/src/app/node_modules # This prevents the host volume from overwriting container node_modules
+    depends_on:
+      chef-shows-db:
+        condition: service_healthy
+    networks:
+      - chef-shows-network
+    command: npm run dev
+  
+  chef-shows-db:
+    container_name: chef-shows-db
+    image: postgres
+    shm_size: 216mb
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-chef-shows}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-postgres}", "-d", "${POSTGRES_DB:-chef-shows}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - chef-shows-network
+    ports:
+      - "${HOST_DB_PORT:-5432}:5432"
+    volumes:
+      - chef-shows-db_data:/var/lib/postgresql/data
+
+
+volumes:
+  node_modules:
+  chef-shows-db_data:
+
+networks:
+  chef-shows-network:
+    driver: bridge
