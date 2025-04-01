@@ -1,0 +1,38 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("SHOWS_DB_URL")
+}
+
+generator client {
+ provider = "prisma-client-js"   
+}
+
+/*
+ 'Rotten Tomatoes': '89/100',
+  Netflix: '1',
+  Hulu: '0',
+  'Prime Video': '0',
+  'Disney+': '0',
+*/
+
+enum Source {
+    OTHER
+    NETFLIX
+    HULU
+    PRIME_VIDEO
+    DISNEY_PLUS
+}
+
+model Shows {
+    id Int @id @default(autoincrement())
+    title String
+    year Int
+    age Int
+    imdb Float
+    rottenTomatoes Int
+    source Source
+
+    @@index([title])
+    @@index([age])
+}
+
