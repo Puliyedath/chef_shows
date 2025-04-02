@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, redirect, useLoaderData, useSearchParams } from "@remix-run/react";
+import { Form, redirect, useActionData, useLoaderData, useSearchParams } from "@remix-run/react";
 import Show from "~/components/Show";
 import { Shows } from "@prisma/client";
 import { getShows } from "~/.server/shows";
@@ -9,12 +9,15 @@ import SearchInputWithToggle from "~/components/SearchToggle";
 
 export default function Index() {
   const { shows, nextCursor, prevCursor } = useLoaderData<typeof loader>();
-  const [searchParams, _] = useSearchParams();
+  const actionData = useActionData<typeof action>();
   if (shows.length === 0) {
     return <EmptyResults />;
   }
   return (
     <div className="min-h-screen p-8">
+      {actionData?.errors?.message && (
+        <div className="text-red-500">{actionData.errors.message}</div>
+      )}
       <div className="flex items-center justify-between">
         <Form method="post" className="mb-6 flex items-center flex-1">
           <SearchInputWithToggle />
@@ -40,15 +43,22 @@ export async function action({ request }: ActionFunctionArgs) {
   const redirectUrl = new URL("/", request.url);
   if (q) redirectUrl.searchParams.set("q", q);
   if (cid) redirectUrl.searchParams.set("cid", cid);
+  const age = q?.match(/age:\s*(\d+)/i) ?? undefined;
+  if (q?.includes("age:") && !age) {
+    return Response.json({
+      errors: { message: "Age should be a number" },
+    });
+  }
   return redirect(redirectUrl.toString());
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const q = url.searchParams.get("q") || undefined;
-  const title = q?.match(/title:([^\s]+)/i) ?? undefined;
-  const age = q?.match(/age:(\d+)/i) ?? undefined;
-  const cursorId = url.searchParams.get("cid") || undefined; // cid is positive for forward and negative for previous
+  const title = q?.match(/title:\s*([^\s]+)/i) ?? undefined;
+  const age = q?.match(/age:\s*(\d+)/i) ?? undefined;
+  const cursorId = url.searchParams.get("cid") || undefined;
+  // cid is positive for forward and negative for previous
   const { shows, nextCursor, prevCursor } = await getShows({
     q: title?.[1],
     ...(cursorId && parseInt(cursorId) < 0
