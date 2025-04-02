@@ -28,10 +28,8 @@ This repository contains the **development container setup** for running the Che
 
 Create a `.env` file in the root directory with the following variables:
 ```env
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=chef-shows
-HOST_PORT=3000
+SHOWS_DB_URL=postgresql://postgres:postgres@localhost:5432/chef-shows
+NODE_ENV=development
 ```
 
 ## Running Locally
