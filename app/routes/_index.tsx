@@ -1,22 +1,24 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, redirect, useLoaderData } from "@remix-run/react";
+import { Form, redirect, useLoaderData, useSearchParams } from "@remix-run/react";
 import Show from "~/components/Show";
 import { Shows } from "@prisma/client";
 import { getShows } from "~/.server/shows";
 import { PageNavigationLinks } from "~/components/PageNationLink";
+import EmptyResults from "~/components/EmptyResults";
+import SearchInput from "~/components/SearchInput";
 
 export default function Index() {
   const { shows, nextCursor, prevCursor } = useLoaderData<typeof loader>();
+  const [searchParams, _] = useSearchParams();
+  const q = searchParams.get("q");
+  if (shows.length === 0) {
+    return <EmptyResults />;
+  }
   return (
     <div className="min-h-screen p-8">
       <div className="flex items-center justify-between">
         <Form method="post" className="mb-6 flex items-center flex-1">
-          <input
-            type="text"
-            name="q"
-            placeholder="Search title or age (e.g. 'title:inception or age:30')"
-            className="border rounded p-2 w-full"
-          />
+          <SearchInput q={q} />
           <button type="submit" className="ml-2 bg-blue-500 text-white rounded p-2">
             Search
           </button>
@@ -57,6 +59,5 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     limit,
     age: age?.[1],
   });
-  console.log({ shows, nextCursor, prevCursor });
   return Response.json({ shows, nextCursor, prevCursor });
 }
