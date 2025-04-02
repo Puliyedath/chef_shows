@@ -10,6 +10,8 @@ CREATE TABLE "Shows" (
     "imdb" DOUBLE PRECISION NOT NULL,
     "rottenTomatoes" INTEGER NOT NULL,
     "source" "Source" NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Shows_pkey" PRIMARY KEY ("id")
 );
