@@ -32,12 +32,12 @@ export function PageNavigationLinks({
     <div className="flex self-start">
       {prevCursor > 0 && (
         <PageNationLink cursorId={`-${prevCursor}`}>
-          <button className="ml-2 bg-blue-500 text-white rounded p-2">Previous</button>
+          <button className="ml-2 bg-blue-500 text-white rounded p-2">&larr;</button>
         </PageNationLink>
       )}
       {nextCursor && (
         <PageNationLink cursorId={`${nextCursor}`}>
-          <button className="ml-2 bg-blue-500 text-white rounded p-2">Next</button>
+          <button className="ml-2 bg-blue-500 text-white rounded p-2">&rarr;</button>
         </PageNationLink>
       )}
     </div>

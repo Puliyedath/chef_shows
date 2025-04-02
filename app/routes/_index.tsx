@@ -5,7 +5,7 @@ import { Shows } from "@prisma/client";
 import { getShows } from "~/.server/shows";
 import { PageNavigationLinks } from "~/components/PageNationLink";
 import EmptyResults from "~/components/EmptyResults";
-import SearchInput from "~/components/SearchInput";
+import SearchInputWithToggle from "~/components/SearchToggle";
 
 export default function Index() {
   const { shows, nextCursor, prevCursor } = useLoaderData<typeof loader>();
@@ -18,8 +18,8 @@ export default function Index() {
     <div className="min-h-screen p-8">
       <div className="flex items-center justify-between">
         <Form method="post" className="mb-6 flex items-center flex-1">
-          <SearchInput q={q} />
-          <button type="submit" className="ml-2 bg-blue-500 text-white rounded p-2">
+          <SearchInputWithToggle />
+          <button type="submit" className="ml-2 bg-blue-500 text-white rounded p-2 self-start">
             Search
           </button>
           <PageNavigationLinks nextCursor={nextCursor} prevCursor={prevCursor} />
