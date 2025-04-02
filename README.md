@@ -15,28 +15,61 @@ This repository contains the **development container setup** for running the Che
 
 ## 🚀 Getting Started with Development
 
-To run the application locally in development mode:
+# Chef Shows App
 
-1. **Build and start the containers:**
+## Development Setup
 
-   ```bash
-   docker-compose build
-   docker-compose up -d
+### Prerequisites
+- Docker and Docker Compose
+- Node.js 20 or higher
+- npm 9 or higher
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+```env
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=chef-shows
+HOST_PORT=3000
 ```
 
- 2. **Seed the Database:**
+## Running Locally
 
- After the database is up and running, execute
+1. **Start the Development Environment**
+   ```bash
+   # Build the Docker images
+   docker-compose build
 
- ```bash
- # This add the tv show records from the kaggle dataset
- npm run seed-data
- ```
+   # Start the containers in detached mode
+   docker-compose up -d
 
-3. **View the App:**
+2. **Run Prisma migrations**
+   ```bash
+   # Runs the timestamped migrations under /prisma/migrations
+   npm run prisma:migrate:deploy
+   ```
 
-Navigate to localhost:3000
+3. **Seed the Database**
+   ```bash
+   # Load initial data into the database
+   npm run seed-data
+   ```
 
+4. **Access the Application**
+   
+   Open your browser and navigate to:
+   ```
+   http://localhost:3000
+   ```
 
+## Available Scripts
+
+- `docker-compose build` - Builds the Docker images
+- `docker-compose up -d` - Starts the containers in detached mode
+- `docker-compose down` - Stops and removes the containers
+- `npm run seed-data` - Seeds the database with initial data
+- `npm run dev` - Starts the development server
+- `npm run test` - Runs the unit test
 
 
