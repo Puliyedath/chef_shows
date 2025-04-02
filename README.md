@@ -2,6 +2,8 @@
 
 This repository contains the **development container setup** for running the Chef Shows App locally.
 
+[**DemoVideo Download Link**](https://drive.google.com/file/d/1_RFTBRr8mm-NRQ6TWikayaZnA1YDhbPD/view?usp=sharing)
+
 ---
 
 ## 🧱 Tech Stack
