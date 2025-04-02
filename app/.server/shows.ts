@@ -10,7 +10,6 @@ export async function getShows({
   q?: string;
   forwardCursorId?: string;
   previousCursorId?: string;
-  limit: number;
   age?: string;
 }) {
   const cursorId = forwardCursorId || previousCursorId || undefined;

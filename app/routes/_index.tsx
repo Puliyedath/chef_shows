@@ -10,7 +10,6 @@ import SearchInputWithToggle from "~/components/SearchToggle";
 export default function Index() {
   const { shows, nextCursor, prevCursor } = useLoaderData<typeof loader>();
   const [searchParams, _] = useSearchParams();
-  const q = searchParams.get("q");
   if (shows.length === 0) {
     return <EmptyResults />;
   }
