@@ -3,9 +3,10 @@ import { Form, redirect, useLoaderData } from "@remix-run/react";
 import Show from "~/components/Show";
 import { Shows } from "@prisma/client";
 import { getShows } from "~/.server/shows";
+import { PageNavigationLinks } from "~/components/PageNationLink";
 
 export default function Index() {
-  const { shows } = useLoaderData<typeof loader>();
+  const { shows, nextCursor, prevCursor } = useLoaderData<typeof loader>();
   return (
     <div className="min-h-screen p-8">
       <div className="flex items-center justify-between">
@@ -19,6 +20,7 @@ export default function Index() {
           <button type="submit" className="ml-2 bg-blue-500 text-white rounded p-2">
             Search
           </button>
+          <PageNavigationLinks nextCursor={nextCursor} prevCursor={prevCursor} />
         </Form>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -33,7 +35,11 @@ export default function Index() {
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const q = formData.get("q") as string | undefined;
-  return redirect(`/?q=${q}`);
+  const cid = formData.get("cid") as string | undefined;
+  const redirectUrl = new URL("/", request.url);
+  if (q) redirectUrl.searchParams.set("q", q);
+  if (cid) redirectUrl.searchParams.set("cid", cid);
+  return redirect(redirectUrl.toString());
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -42,7 +48,15 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const q = url.searchParams.get("q") || undefined;
   const title = q?.match(/title:([^\s]+)/i) ?? undefined;
   const age = q?.match(/age:(\d+)/i) ?? undefined;
-  const cursorId = params.cursorId;
-  const shows = await getShows({ q: title?.[1], cursorId, limit, age: age?.[1] });
-  return Response.json({ shows });
+  const cursorId = url.searchParams.get("cid") || undefined; // cid is positive for forward and negative for previous
+  const { shows, nextCursor, prevCursor } = await getShows({
+    q: title?.[1],
+    ...(cursorId && parseInt(cursorId) < 0
+      ? { previousCursorId: cursorId }
+      : { forwardCursorId: cursorId }),
+    limit,
+    age: age?.[1],
+  });
+  console.log({ shows, nextCursor, prevCursor });
+  return Response.json({ shows, nextCursor, prevCursor });
 }

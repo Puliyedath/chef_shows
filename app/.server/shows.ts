@@ -2,24 +2,32 @@ import { chefShowsDBClient } from "prisma/client";
 
 export async function getShows({
   q,
-  cursorId,
+  forwardCursorId,
+  previousCursorId,
   limit,
   age,
 }: {
   q?: string;
-  cursorId?: string;
+  forwardCursorId?: string;
+  previousCursorId?: string;
   limit: number;
   age?: string;
 }) {
+  const cursorId = forwardCursorId || previousCursorId || undefined;
   const shows = await chefShowsDBClient.shows.findMany({
-    take: limit,
-    // This conditionally adds a filter to the query to search for shows where the title contains the search query (q), ignoring case sensitivity.
+    take: previousCursorId ? -limit : limit,
+    ...(cursorId ? { skip: 1 } : {}),
     ...(q ? { where: { title: { contains: q, mode: "insensitive" } } } : {}),
     ...(age ? { where: { age: { gte: parseInt(age) } } } : {}),
     orderBy: {
       createdAt: "desc",
     },
-    ...(cursorId ? { cursor: { id: parseInt(cursorId) } } : {}),
+    ...(cursorId ? { cursor: { id: Math.abs(parseInt(cursorId)) } } : {}),
   });
-  return shows;
+
+  return {
+    shows,
+    nextCursor: shows.length > 0 ? shows[shows.length - 1].id : undefined,
+    prevCursor: shows.length > 0 ? shows?.[0]?.id : undefined,
+  };
 }
