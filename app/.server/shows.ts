@@ -1,10 +1,10 @@
 import { chefShowsDBClient } from "prisma/client";
+const LIMIT = 40;
 
 export async function getShows({
   q,
   forwardCursorId,
   previousCursorId,
-  limit,
   age,
 }: {
   q?: string;
@@ -15,19 +15,19 @@ export async function getShows({
 }) {
   const cursorId = forwardCursorId || previousCursorId || undefined;
   const shows = await chefShowsDBClient.shows.findMany({
-    take: previousCursorId ? -limit : limit,
-    ...(cursorId ? { skip: 1 } : {}),
+    take: previousCursorId ? -(LIMIT + 1) : LIMIT + 1,
+    skip: cursorId ? 1 : 0,
     ...(q ? { where: { title: { contains: q, mode: "insensitive" } } } : {}),
     ...(age ? { where: { age: { gte: parseInt(age) } } } : {}),
     orderBy: {
-      createdAt: "desc",
+      id: "asc",
     },
     ...(cursorId ? { cursor: { id: Math.abs(parseInt(cursorId)) } } : {}),
   });
 
   return {
-    shows,
-    nextCursor: shows.length > 0 ? shows[shows.length - 1].id : undefined,
-    prevCursor: shows.length > 0 ? shows?.[0]?.id : undefined,
+    shows: shows.slice(0, LIMIT),
+    nextCursor: shows.length > LIMIT ? shows[shows.length - 2]?.id : undefined,
+    prevCursor: shows.length > LIMIT ? shows?.[0]?.id : undefined,
   };
 }

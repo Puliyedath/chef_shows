@@ -44,8 +44,7 @@ export async function action({ request }: ActionFunctionArgs) {
   return redirect(redirectUrl.toString());
 }
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
-  const limit = parseInt(params.limit || "40");
+export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const q = url.searchParams.get("q") || undefined;
   const title = q?.match(/title:([^\s]+)/i) ?? undefined;
@@ -56,7 +55,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     ...(cursorId && parseInt(cursorId) < 0
       ? { previousCursorId: cursorId }
       : { forwardCursorId: cursorId }),
-    limit,
     age: age?.[1],
   });
   return Response.json({ shows, nextCursor, prevCursor });
