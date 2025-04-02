@@ -24,18 +24,19 @@ To run the application locally in development mode:
    docker-compose up -d
 ```
 
-## Seeding the Database
+ 2. **Seed the Database:**
 
-After the database container (chef-shows-db) is up and running
+ After the database is up and running, execute
 
-```shellscript
- docker ps | grep chef-shows-db
+ ```bash
+ # This add the tv show records from the kaggle dataset
  npm run seed-data
-```
+ ```
 
-This add the tv show records from the kaggle dataset
+3. **View the App:**
 
-Navigate to localhost:3000 to view the shows app 
+Navigate to localhost:3000
+
 
 
 
