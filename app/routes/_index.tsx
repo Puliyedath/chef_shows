@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, redirect, useActionData, useLoaderData, useSearchParams } from "@remix-run/react";
+import { Form, redirect, useActionData, useLoaderData } from "@remix-run/react";
 import Show from "~/components/Show";
 import { Shows } from "@prisma/client";
 import { getShows } from "~/.server/shows";

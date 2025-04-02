@@ -9,7 +9,7 @@ vi.mock("@remix-run/react", async () => {
   const actual = (await vi.importActual("@remix-run/react")) as typeof RemixReact;
   return {
     ...actual,
-    Form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
+    Form: ({ children, ...props }: RemixReact.FormProps) => <form {...props}>{children}</form>,
   };
 });
 
