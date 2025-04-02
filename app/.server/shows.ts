@@ -15,7 +15,7 @@ export async function getShows({
 }) {
   const cursorId = forwardCursorId || previousCursorId || undefined;
   const shows = await chefShowsDBClient.shows.findMany({
-    take: previousCursorId ? -(LIMIT + 1) : LIMIT + 1,
+    take: previousCursorId ? -LIMIT : LIMIT,
     skip: cursorId ? 1 : 0,
     ...(q ? { where: { title: { contains: q, mode: "insensitive" } } } : {}),
     ...(age ? { where: { age: { gte: parseInt(age) } } } : {}),
@@ -27,7 +27,7 @@ export async function getShows({
 
   return {
     shows: shows.slice(0, LIMIT),
-    nextCursor: shows.length > LIMIT ? shows[shows.length - 2]?.id : undefined,
-    prevCursor: shows.length > LIMIT ? shows?.[0]?.id : undefined,
+    nextCursor: shows.length > 0 ? shows[shows.length - 1]?.id : undefined,
+    prevCursor: shows.length > 0 ? shows?.[0]?.id : undefined,
   };
 }
