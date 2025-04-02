@@ -34,7 +34,12 @@ NODE_ENV=development
 
 ## Running Locally
 
-1. **Start the Development Environment**
+1. **Installing dependencies (for tooling)**
+```bash
+   npm install
+   ```
+
+2. **Start the Development Environment**
    ```bash
    # Build the Docker images
    docker-compose build
@@ -42,19 +47,19 @@ NODE_ENV=development
    # Start the containers in detached mode
    docker-compose up -d
 
-2. **Run Prisma migrations**
+3. **Run Prisma migrations**
    ```bash
    # Runs the timestamped migrations under /prisma/migrations
    npm run prisma:migrate:deploy
    ```
 
-3. **Seed the Database**
+4. **Seed the Database**
    ```bash
    # Load initial data into the database
    npm run seed-data
    ```
 
-4. **Access the Application**
+5. **Access the Application**
    
    Open your browser and navigate to:
    ```
