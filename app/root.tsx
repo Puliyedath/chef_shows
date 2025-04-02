@@ -26,7 +26,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <header className="flex items-center flex-start bg-cupcakeYellow sticky top-0 z-10 bg-[#f3d6b4]">
+          <img src="public/logo.png" alt="Shows App Logo" className="h-16 w-auto" />
+          <h1 className="text-2xl font-bold font-mono px-4">My Shows</h1>
+        </header>
+        <main className="container mx-auto">{children}</main>
         <ScrollRestoration />
         <Scripts />
       </body>
